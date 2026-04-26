@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate Verifier</title>
+  <style>
+    body { font-family: Arial; max-width: 700px; margin: 50px auto; background: #0f0f1a; color: white; padding: 20px; }
+    h1 { color: #7c3aed; text-align: center; }
+    .card { background: #1a1a2e; padding: 25px; border-radius: 12px; margin: 20px 0; border: 1px solid #7c3aed; }
+    input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 8px; border: 1px solid #7c3aed; background: #0f0f1a; color: white; box-sizing: border-box; }
+    button { background: #7c3aed; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
+    button:hover { background: #6d28d9; }
+    .result { margin-top: 15px; padding: 15px; border-radius: 8px; }
+    .success { background: #064e3b; border: 1px solid #10b981; }
+    .error { background: #7f1d1d; border: 1px solid #ef4444; }
+    .tag { display: inline-block; background: #7c3aed; padding: 3px 10px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🔗 Certificate Verifier</h1>
+  <p style="text-align:center; color:#a78bfa;">Blockchain-powered certificate authentication</p>
+
+  <div class="card">
+    <span class="tag">ISSUE</span>
+    <h3>Issue a Certificate</h3>
+    <input id="issueId" placeholder="Certificate ID (e.g. CERT001)" />
+    <input id="studentName" placeholder="Student Name" />
+    <input id="courseName" placeholder="Course Name" />
+    <input id="issueDate" placeholder="Issue Date (e.g. 2026-04-26)" />
+    <button onclick="issueCert()">📜 Issue Certificate</button>
+    <div id="issueResult"></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">VERIFY</span>
+    <h3>Verify a Certificate</h3>
+    <input id="verifyId" placeholder="Certificate ID to verify" />
+    <button onclick="verifyCert()">🔍 Verify Certificate</button>
+    <div id="verifyResult"></div>
+  </div>
+
+  <script>
+    // Simulated blockchain storage (for demo)
+    const blockchain = {};
+
+    function issueCert() {
+      const id = document.getElementById('issueId').value;
+      const name = document.getElementById('studentName').value;
+      const course = document.getElementById('courseName').value;
+      const date = document.getElementById('issueDate').value;
+
+      if (!id || !name || !course || !date) {
+        document.getElementById('issueResult').innerHTML = '<div class="result error">❌ Please fill all fields</div>';
+        return;
+      }
+
+      blockchain[id] = { name, course, date, hash: btoa(id + name + course) };
+      document.getElementById('issueResult').innerHTML = `
+        <div class="result success">
+          ✅ Certificate issued on blockchain!<br>
+          <small>Hash: ${blockchain[id].hash}</small>
+        </div>`;
+    }
+
+    function verifyCert() {
+      const id = document.getElementById('verifyId').value;
+      const cert = blockchain[id];
+
+      if (!cert) {
+        document.getElementById('verifyResult').innerHTML = '<div class="result error">❌ Certificate NOT found on blockchain. Possibly fake!</div>';
+        return;
+      }
+
+      document.getElementById('verifyResult').innerHTML = `
+        <div class="result success">
+          ✅ VALID Certificate Found!<br><br>
+          👤 Student: <b>${cert.name}</b><br>
+          📚 Course: <b>${cert.course}</b><br>
+          📅 Date: <b>${cert.date}</b><br>
+          🔐 Hash: <small>${cert.hash}</small>
+        </div>`;
+    }
+  </script>
+</body>
+</html>
